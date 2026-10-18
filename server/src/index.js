@@ -162,13 +162,6 @@ process.on('unhandledRejection', (err) => {
   console.error('[server] unhandled rejection:', err);
 });
 
-try {
-  engine.warmup();
-} catch (err) {
-  console.error('[server] engine warmup failed:', err);
-  process.exit(1);
-}
-
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`Port ${PORT} is already in use — set PORT to a free port.`);
@@ -183,16 +176,29 @@ const HOST = process.env.HOST || '0.0.0.0';
 server.listen(PORT, HOST, () => {
   console.log(`AlphaDesk server listening at http://localhost:${PORT}`);
   console.log(`[net] also reachable on your network at http://<this-machine-IP>:${PORT}`);
-  // Kick off the live market-data overlay. Non-blocking: the simulated
-  // baseline serves immediately and the UI flips to live as data lands.
-  if (process.env.ALPHADESK_LIVE === '0') {
-    console.log('[market] live data disabled (ALPHADESK_LIVE=0) — serving simulated baseline');
-    return;
-  }
-  engine.startMarket()
-    .then((s) => {
-      console.log(`[market] ${s.online ? 'online' : 'offline'} — ${s.quotes.done}/${s.quotes.total} quotes via ${s.source}`);
-      if (!s.online && s.lastError) console.log(`[market] note: ${s.lastError}`);
-    })
-    .catch((err) => console.error('[market] start failed:', (err && err.message) || err));
+
+  // Warm the engine only AFTER the port is bound. Platform health checks
+  // (Render / Fly / Docker) then get an instant 200 from /api/health instead of
+  // waiting on the engine, which matters on 0.1-CPU free instances.
+  setImmediate(() => {
+    try {
+      engine.warmup();
+    } catch (err) {
+      console.error('[server] engine warmup failed:', err);
+      process.exit(1);
+    }
+
+    // Kick off the live market-data overlay. Non-blocking: the simulated
+    // baseline serves immediately and the UI flips to live as data lands.
+    if (process.env.ALPHADESK_LIVE === '0') {
+      console.log('[market] live data disabled (ALPHADESK_LIVE=0) — serving simulated baseline');
+      return;
+    }
+    engine.startMarket()
+      .then((s) => {
+        console.log(`[market] ${s.online ? 'online' : 'offline'} — ${s.quotes.done}/${s.quotes.total} quotes via ${s.source}`);
+        if (!s.online && s.lastError) console.log(`[market] note: ${s.lastError}`);
+      })
+      .catch((err) => console.error('[market] start failed:', (err && err.message) || err));
+  });
 });
