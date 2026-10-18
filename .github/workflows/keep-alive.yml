@@ -10,8 +10,9 @@ name: keep-alive
 
 on:
   schedule:
-    # Every 10 minutes. GitHub may delay these by a few minutes under load.
-    - cron: '*/10 * * * *'
+    # Every 5 minutes (GitHub's minimum). Render sleeps after ~15 idle minutes,
+    # so this keeps it warm even when a scheduled run is delayed.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions: {}

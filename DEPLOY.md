@@ -56,9 +56,11 @@ gh repo create alphadesk --private --source . --push
 Manual alternative without the blueprint: **New +** → **Web Service** → repo →
 Runtime **Docker** → Health Check Path `/api/health` → Plan **Free**.
 
-To keep it warm you can point any uptime monitor (e.g. UptimeRobot, free) at
-`https://<your-app>.onrender.com/api/health` every 5 minutes. That also keeps
-you well inside the free hours allowance.
+To keep it warm, this repo ships a **keep-alive workflow**
+(`.github/workflows/keep-alive.yml`) that pings `/api/health` every 5 minutes
+from GitHub Actions. GitHub Actions is free for public repositories, so this
+costs nothing and the free Render instance stays awake. You can also trigger it
+manually from the repository's **Actions** tab.
 
 ---
 
