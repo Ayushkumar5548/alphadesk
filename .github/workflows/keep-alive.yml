@@ -1,0 +1,27 @@
+# Keeps the Render free instance from going to sleep.
+#
+# Render's free plan spins a service down after ~15 minutes with no traffic, so
+# the next visitor waits ~30-60s while it wakes. This workflow pings the cheap
+# /api/health endpoint every 10 minutes so the site stays warm.
+#
+# Public repos get unlimited free GitHub Actions minutes, so this costs nothing.
+# You can also run it on demand from the Actions tab (workflow_dispatch).
+name: keep-alive
+
+on:
+  schedule:
+    # Every 10 minutes. GitHub may delay these by a few minutes under load.
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping AlphaDesk health endpoint
+        run: |
+          set -x
+          curl -sS -m 90 -o /dev/null -w 'health: HTTP %{http_code} in %{time_total}s\n' \
+            https://alphadesk.onrender.com/api/health || true
