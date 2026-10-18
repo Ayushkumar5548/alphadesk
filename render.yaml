@@ -1,0 +1,16 @@
+# Render blueprint — AlphaDesk.
+#
+# Create a new "Blueprint" in Render, point it at this repo, and Render reads
+# this file. See DEPLOY.md for the full walkthrough.
+services:
+  - type: web
+    name: alphadesk
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: ALPHADESK_LIVE
+        value: "1"

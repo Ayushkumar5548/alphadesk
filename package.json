@@ -1,0 +1,15 @@
+{
+  "name": "alphadesk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AlphaDesk — AI stock research. Zero-dependency Node API + React client.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/src/index.js",
+    "build": "npm --prefix client ci && npm --prefix client run build",
+    "test": "node server/selftest.js"
+  }
+}

@@ -1,0 +1,11 @@
+# Never ship these into the image/build context.
+**/node_modules
+**/dist
+server/data
+screenshots
+.git
+.gitignore
+*.log
+*.tmp
+*.bak
+.DS_Store

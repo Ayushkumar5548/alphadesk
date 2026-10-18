@@ -1,0 +1,10 @@
+# dependencies + build output (installed/built on the host)
+node_modules/
+dist/
+
+# runtime state + market caches — regenerated at boot, never committed
+server/data/
+
+# local logs / OS cruft
+*.log
+.DS_Store

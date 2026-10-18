@@ -1,0 +1,13 @@
+# Normalize text files to LF in the repository so the Linux container build
+# gets clean line endings regardless of the Windows working copy.
+* text=auto
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.gz binary
