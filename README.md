@@ -146,12 +146,13 @@ node server/src/index.js
 
 ### Open it from any device, anywhere (public internet)
 
-AlphaDesk is published with a **permanent** public URL via a **Tailscale Funnel**
-(free, stable across restarts and reboots, no firewall rules, no port forwarding,
-no domain needed):
+AlphaDesk can also be published with a **permanent** public URL via a
+**Tailscale Funnel** (free, stable across restarts and reboots, no firewall
+rules, no port forwarding, no domain needed). The live URL is whatever your
+machine publishes — it's always available at `GET /api/tunnel`:
 
 ```
-https://alphadesk.tailb90530.ts.net
+https://<machine>.<tailnet>.ts.net
 ```
 
 ```powershell
@@ -192,6 +193,8 @@ lives in this folder:
 **See [`DEPLOY.md`](./DEPLOY.md)** for step-by-step instructions for Render
 (free), Fly.io (always-on, ~US$3/mo) and Hugging Face Spaces (free). Liveness
 probe: `GET /api/health`.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Ayushkumar5548/alphadesk)
 
 ### Monthly basket changes & exit tracking
 
