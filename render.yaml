@@ -5,12 +5,12 @@
 services:
   - type: web
     name: alphadesk
-    env: docker
+    runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
     region: oregon
     healthCheckPath: /api/health
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
       - key: ALPHADESK_LIVE
         value: "1"
