@@ -23,9 +23,14 @@ Product: **AlphaDesk**. Premium tier badge: **AlphaDesk Pro+**. AI picks: **Alph
   (see "Live market data overlay" below). Pure Node `fetch`, no dependencies.
   Disable with `ALPHADESK_LIVE=0` (the self-test does this).
 - Public access: the :8787 server is exposed on the internet through a tunnel so
-  the app is reachable from any PC/phone. `watch-alpha.ps1` is the supervisor —
-  it ensures the server is listening and re-arms the tunnel if it drops, and is
-  driven by the `AlphaDesk` Windows scheduled task (at logon, then every 5 min).
+  the app is reachable from any device. The server process itself is kept alive
+  by `run-server.ps1`, a single-instance supervisor (named mutex) that restarts
+  it within **seconds** of any exit and records every start/exit to
+  `~\.alphadesk\server.log`, with the server's own stdout/stderr in
+  `~\.alphadesk\server-out.log` and `server-err.log`. `watch-alpha.ps1` is the
+  slower safety net: it restarts that supervisor if it is gone and re-arms the
+  tunnel below (it is driven by the `AlphaDesk` Windows scheduled task at logon,
+  then every 5 minutes).
   Default provider is a permanent **Tailscale Funnel** (`tailscale funnel --bg 8787`);
   the active provider/credentials live in `~\.alphadesk\tunnel.config.json`
   (`tailscale` | `ngrok` | `quick`), and the live URL is in

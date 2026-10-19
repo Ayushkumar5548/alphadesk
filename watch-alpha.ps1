@@ -67,15 +67,17 @@ if (Test-Path $ts) {
 if ($provider -eq 'quick' -and $tsReady) { $provider = 'tailscale' }
 
 # --- 1. API/static server ---------------------------------------------------
+# Started through run-server.ps1, which keeps the port served continuously and
+# restarts the server within seconds of any exit. The 5-minute tick below is
+# only a safety net in case the supervisor itself is gone.
 $listen = Get-NetTCPConnection -LocalPort $PORT -State Listen -ErrorAction SilentlyContinue
 if (-not $listen) {
-  $node = (Get-Command node.exe -ErrorAction SilentlyContinue).Source
-  if (-not $node) { $node = 'C:\Program Files\nodejs\node.exe' }
-  $entry = Join-Path $root 'server\src\index.js'
-  $npid = Detach "`"$node`" `"$entry`""
-  Log "server: started (pid $npid)"
-  Say "server: started (pid $npid)"
-  Start-Sleep -Seconds 3
+  $psExe  = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+  $super  = Join-Path $root 'run-server.ps1'
+  $npid = Detach "`"$psExe`" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$super`""
+  Log "server: supervisor started (pid $npid)"
+  Say "server: supervisor started (pid $npid)"
+  Start-Sleep -Seconds 4
 }
 
 # --- 2. is the public URL healthy? -----------------------------------------
